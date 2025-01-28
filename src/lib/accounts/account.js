@@ -9,7 +9,7 @@ class Account {
      * @param {string} type - The account's type ("Aktiv", "Passiv", "Aufwand", or "Ertrag").
      * @param {number} code - The account's code number (integer between 1 and 9999).
      * @param {string} name - The account's full name.
-     * @param {string[]} aliases - A list of short name aliases for the account.
+     * @param {Array<string>} aliases - A list of short name aliases for the account.
      * @param {number} balance - The initial balance of the account.
      */
     constructor(type, code, name, aliases = [], balance = 0.0) {

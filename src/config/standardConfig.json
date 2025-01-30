@@ -1,1 +1,16 @@
-{}
+{
+  "defaultCurrency": "CHF",
+  "exchangeRates": {
+    "CHF": 1.0,
+    "USD": 0.92,
+    "EUR": 1.03
+  },
+  "allowedBookingTypes": [
+    "Buchung",
+    "Sammelbuchung",
+    "Splitsammelbuchung",
+    "Rückbuchung"
+  ],
+  "allowedAccountTypes": ["Aktiv", "Passiv", "Aufwand", "Ertrag"],
+  "transactionSideTypes": ["Soll", "Haben"]
+}

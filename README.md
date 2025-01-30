@@ -17,9 +17,9 @@
 3. [Features](#features)  
 4. [Installation](#installation)  
 5. [Usage](#usage)  
-6. [Testing](#testing)  
+6. [Testing](#description-of-tests)  
 7. [File Overview](#file-overview)  
-8. [License](#license)  
+8. [License](#license-notice)  
 
 ---
 

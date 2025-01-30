@@ -1,11 +1,14 @@
 
 <div align="center">
-  <img src="https://github.com/user-attachments/assets/79d49fcd-7447-4eee-8291-93e5663f6874" width="95%" alt="DeepSeek-V3" />
+  <img src="https://github.com/user-attachments/assets/79d49fcd-7447-4eee-8291-93e5663f6874" width="95%" alt="ch-finance-engine" />
 </div>
 
 <hr/>
 
 <div align="center" style="line-height: 1;">
+  <a href="https://github.com/x47base/ch-finance-engine/" style="margin: 2px;">
+    <img alt="Code License" src="https://img.shields.io/badge/Release_Version-V1.0.1-green" style="display: inline-block; vertical-align: middle;"/>
+  </a>
   <a href="https://github.com/x47base/ch-finance-engine/blob/main/LICENSE" style="margin: 2px;">
     <img alt="Code License" src="https://img.shields.io/badge/Code_License-modified_MIT_License-blue" style="display: inline-block; vertical-align: middle;"/>
   </a>

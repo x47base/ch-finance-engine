@@ -6,7 +6,7 @@ describe("Engine class", () => {
     let engine;
 
     beforeAll(() => {
-        engine = new Engine("../config/standardConfig.json");
+        engine = new Engine("standard-config");
     });
 
     test("creates a new Book and Accounts, then performs standard Buchung", () => {

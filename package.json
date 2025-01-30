@@ -4,7 +4,7 @@
   "description": "This package is an finance and accounting engine specificly made based on the swiss system.",
   "main": "./src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -23,5 +23,12 @@
     "frw"
   ],
   "author": "Samuel Spink",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "fs": "^0.0.1-security",
+    "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
 }

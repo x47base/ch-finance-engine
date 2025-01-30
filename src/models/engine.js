@@ -12,7 +12,7 @@ class Engine {
     /**
      * @param {string} [configFile="../config/standardConfig.json"]
      */
-    constructor(configFile = "../config/standardConfig.json") {
+    constructor(configFile = "standard-config") {
         this._config = loadConfig(configFile);
         this._books = [];
         this._accounts = [];

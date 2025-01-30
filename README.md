@@ -1,6 +1,6 @@
 
 <div align="center">
-  <img src="https://github.com/user-attachments/assets/79d49fcd-7447-4eee-8291-93e5663f6874" width="60%" alt="DeepSeek-V3" />
+  <img src="https://github.com/user-attachments/assets/79d49fcd-7447-4eee-8291-93e5663f6874" width="95%" alt="DeepSeek-V3" />
 </div>
 
 <hr/>
@@ -74,7 +74,7 @@
 
 ```js
 // index.js or main script
-const Engine = require("./src/models/engine");
+const { Engine } = require("@x47base/ch-finance-engine");
 
 function demo() {
   const engine = new Engine("./src/config/standardConfig.json");

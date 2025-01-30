@@ -80,7 +80,7 @@
 const { Engine } = require("@x47base/ch-finance-engine");
 
 function demo() {
-  const engine = new Engine("./src/config/standardConfig.json");
+  const engine = new Engine("standard-config");
   
   // Create a Book for 2025
   const book2025 = engine.createBook(2025);

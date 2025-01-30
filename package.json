@@ -24,6 +24,9 @@
   ],
   "author": "Samuel Spink",
   "license": "SEE LICENSE IN LICENSE",
+  "publishConfig": {
+    "@x47base:registry": "https://npm.pkg.github.com"
+  },
   "dependencies": {
     "fs": "^0.0.1-security",
     "path": "^0.12.7"

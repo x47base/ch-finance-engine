@@ -1,6 +1,6 @@
 {
   "name": "ch-finance-engine",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "This package is an finance and accounting engine specificly made based on the swiss system.",
   "main": "./src/index.js",
   "scripts": {
@@ -23,7 +23,7 @@
     "frw"
   ],
   "author": "Samuel Spink",
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE",
   "dependencies": {
     "fs": "^0.0.1-security",
     "path": "^0.12.7"

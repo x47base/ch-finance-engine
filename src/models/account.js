@@ -1,78 +1,50 @@
-import accountTypes from "../types/accountTypes";
+const accountTypes = require("../config/accountTypes");
 
+/**
+ * Represents a ledger account.
+ */
 class Account {
     /**
-     * @param {string} type - The account's type ("Aktiv", "Passiv", "Aufwand", or "Ertrag").
-     * @param {number} code - The account's code number (integer between 1 and 9999).
-     * @param {string} name - The account's full name.
-     * @param {Array<string>} aliases - A list of short name aliases for the account.
-     * @param {number} balance - The initial balance of the account.
+     * @param {string} type - Account type ("Aktiv", "Passiv", "Aufwand", "Ertrag").
+     * @param {number} code - Integer code (1 to 9999).
+     * @param {string} name - Descriptive name.
+     * @param {Array<string>} aliases - Alternate names.
+     * @param {number} balance - Initial balance.
      */
     constructor(type, code, name, aliases = [], balance = 0.0) {
-        /**
-         * The account's type ("Aktiv", "Passiv", "Aufwand", or "Ertrag").
-         * (Read-only)
-         * @type {string}
-         */
         if (!accountTypes.includes(type)) {
             throw new Error("Invalid account type");
         }
         this._type = type;
 
-        /**
-         * The account's code number.
-         * Must be an integer between 1 and 9999.
-         * (Read-only)
-         * @type {number}
-         */
         const parsedCode = Number(code);
         if (!Number.isInteger(parsedCode) || parsedCode < 1 || parsedCode > 9999) {
             throw new Error("Invalid account code. Must be an integer between 1 and 9999.");
         }
         this._code = parsedCode;
 
-        /**
-         * The account's full name.
-         * (Read-only)
-         * @type {string}
-         */
         if (typeof name !== "string") {
             throw new Error("Invalid account name. Must be a string.");
         }
         this._name = name;
 
-        /**
-         * The account's list of short name aliases.
-         * @type {Array<string>}
-         */
-        if (!Array.isArray(aliases)) {
+        if (!Array.isArray(aliases) || !aliases.every(alias => typeof alias === "string")) {
             throw new Error("Aliases must be an array of strings.");
-        } else if (!aliases.every(alias => typeof alias === 'string')) {
-            throw new Error("Each alias must be a string.");
         }
         this._aliases = aliases;
 
-        /**
-         * The account's balance.
-         * @type {number}
-         */
         const numericBalance = Number(balance) || 0.0;
         if (Number.isNaN(numericBalance)) {
             throw new Error("Balance must be a valid number.");
         }
         this._balance = numericBalance;
 
-        /**
-         * A log of transactions made to this account.
-         * Each entry has a `type` ("Soll" or "Haben") and an `amount`.
-         * @type {Array<{ type: 'Soll' | 'Haben', amount: number }>}
-         */
         this._transactionLog = [];
+        this._closed = false;
+        this._fullyBookedForYear = false;
     }
 
-
     /**
-     * Returns the account's type (read-only).
      * @returns {string}
      */
     get type() {
@@ -80,7 +52,6 @@ class Account {
     }
 
     /**
-     * Returns the account's code (read-only).
      * @returns {number}
      */
     get code() {
@@ -88,7 +59,6 @@ class Account {
     }
 
     /**
-     * Returns the account's name (read-only).
      * @returns {string}
      */
     get name() {
@@ -96,14 +66,19 @@ class Account {
     }
 
     /**
-     * Get or set the list of short name aliases.
+     * @type {Array<string>}
      */
     get aliases() {
         return this._aliases;
     }
+    set aliases(aliases) {
+        if (!Array.isArray(aliases) || !aliases.every(a => typeof a === "string")) {
+            throw new Error("Aliases must be an array of strings.");
+        }
+        this._aliases = aliases;
+    }
 
     /**
-     * Gets the current balance of the account.
      * @returns {number}
      */
     get balance() {
@@ -111,8 +86,33 @@ class Account {
     }
 
     /**
-     * Increments the account's balance by a specified amount (default = 1).
-     * @param {number} [amount=1] - The amount to add.
+     * @returns {boolean}
+     */
+    get isClosed() {
+        return this._closed;
+    }
+
+    close() {
+        this._closed = true;
+    }
+
+    reopen() {
+        this._closed = false;
+    }
+
+    /**
+     * @returns {boolean}
+     */
+    get isFullyBookedForYear() {
+        return this._fullyBookedForYear;
+    }
+
+    markFullyBookedForYear() {
+        this._fullyBookedForYear = true;
+    }
+
+    /**
+     * @param {number} [amount=1]
      */
     increment(amount = 1) {
         const numericAmount = Number(amount);
@@ -123,41 +123,50 @@ class Account {
     }
 
     /**
-     * Adds a new transaction to the account. 
-     * "Soll" increases the balance, "Haben" decreases the balance.
-     *
-     * @param {'Soll'|'Haben'} transactionType - Type of transaction.
-     * @param {number} amount - The transaction amount.
+     * @param {Transaction} transaction
+     * @param {number} [exchangeRate=1]
      */
-    addTransaction(transactionType, amount) {
-        if (transactionType !== 'Soll' && transactionType !== 'Haben') {
-            throw new Error('Transaction type must be "Soll" or "Haben".');
+    addTransaction(transaction, exchangeRate = 1) {
+        if (this._closed) {
+            throw new Error(`Cannot add a transaction to a closed account (code ${this._code}).`);
         }
-        const numericAmount = Number(amount);
-        if (Number.isNaN(numericAmount)) {
-            throw new Error("Transaction amount must be a valid number.");
+        if (transaction.status === "canceled") {
+            throw new Error("Cannot add a canceled transaction to an account.");
         }
-
-        // Update balance based on transaction type
-        if (transactionType === 'Soll') {
-            this._balance += numericAmount;
-        } else {
-            this._balance -= numericAmount;
+        const convertedAmount = transaction.amount * exchangeRate;
+        if (transaction.transactionSide === "Soll") {
+            this._balance += convertedAmount;
+        } else if (transaction.transactionSide === "Haben") {
+            this._balance -= convertedAmount;
         }
-
-        // Log the transaction
         this._transactionLog.push({
-            type: transactionType,
-            amount: numericAmount
+            transactionId: transaction.id,
+            transactionSide: transaction.transactionSide,
+            convertedAmount,
+            originalAmount: transaction.amount,
+            originalCurrency: transaction.currency,
+            transactionStatus: transaction.status
         });
     }
 
     /**
-     * Returns the transaction log array.
-     * @returns {Array<{ type: 'Soll'|'Haben', amount: number }>}
+     * @returns {Array<Object>}
      */
     get transactionLog() {
         return this._transactionLog;
+    }
+
+    toJSON() {
+        return {
+            type: this._type,
+            code: this._code,
+            name: this._name,
+            aliases: this._aliases,
+            balance: this._balance,
+            closed: this._closed,
+            fullyBookedForYear: this._fullyBookedForYear,
+            transactionLog: this._transactionLog
+        };
     }
 }
 

@@ -146,4 +146,19 @@ describe("Engine class", () => {
         expect(lastLogEntry.originalCurrency).toBe("USD");
         expect(lastLogEntry.convertedAmount).toBeCloseTo(92.0, 2);
     });
+
+    test("throws an error when creating an account with an existing code", () => {
+        engine.createAccount("Aktiv", 1001, "Cash", ["Kasse"], 1000.0);
+        expect(() => {
+            engine.createAccount("Aktiv", 1001, "Duplicate Cash", ["Kasse"], 2000.0);
+        }).toThrow("Account with code 1001 already exists.");
+    });
+
+    test("loads template accounts", () => {
+        engine = new Engine("standard-config");
+        engine.loadTemplateAccounts();
+        const templateAccount = engine.getAccountByCode(1000);
+        expect(templateAccount).toBeDefined();
+        expect(templateAccount.name).toBe("Kasse");
+    });
 });

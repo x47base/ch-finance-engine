@@ -1,6 +1,7 @@
 const {
     loadConfig
 } = require("../utils/configUtils");
+const TemplateAccounts = require("../config/swissChartOfAccounts");
 const Book = require("./book");
 const Account = require("./account");
 const Transaction = require("./transaction");
@@ -54,6 +55,16 @@ class Engine {
     createBook(year) {
         const book = new Book(year);
         this._books.push(book);
+        this._accounts.forEach(account => {
+            const newAccount = new Account(
+                account.type,
+                account.code,
+                account.name,
+                account.aliases,
+                account.balance
+            );
+            book.addAccount(newAccount);
+        });
         return book;
     }
 
@@ -73,6 +84,10 @@ class Engine {
      * @returns {Account}
      */
     createAccount(type, code, name, aliases = [], balance = 0.0) {
+        const existingAccount = this.getAccountByCode(code);
+        if (existingAccount) {
+            throw new Error(`Account with code ${code} already exists.`);
+        }
         const account = new Account(type, code, name, aliases, balance);
         this._accounts.push(account);
         return account;
@@ -198,6 +213,27 @@ class Engine {
         this.bookTransaction(txSoll.id);
         this.bookTransaction(txHaben.id);
         return [txSoll, txHaben];
+    }
+
+    loadTemplateAccounts(chartFilePath = "template-accounts") {
+        let accountsJSONData;
+        if (chartFilePath === "template-accounts") {
+            accountsJSONData = TemplateAccounts;
+        } else {
+            const absolutePath = path.resolve(__dirname, "..", chartFilePath);
+            const rawData = fs.readFileSync(absolutePath, "utf-8");
+            accountsJSONData = JSON.parse(rawData);
+        }
+    
+        accountsJSONData.forEach(acc => {
+            this.createAccount(
+                acc.type,
+                acc.code,
+                acc.name,
+                acc.aliases || [],
+                acc.balance || 0
+            );
+        });
     }
 
     toJSON() {

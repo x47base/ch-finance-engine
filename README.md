@@ -1,4 +1,3 @@
-
 <div align="center">
   <img src="https://github.com/user-attachments/assets/79d49fcd-7447-4eee-8291-93e5663f6874" width="95%" alt="ch-finance-engine" />
 </div>
@@ -14,69 +13,46 @@
   </a>
 </div>
 
+---
+
+# ch-finance-engine
+
 ## Table of Contents
 1. [Introduction](#introduction)  
-2. [Architecture](#architecture)  
-3. [Features](#features)  
-4. [Installation](#installation)  
-5. [Usage](#usage)  
-6. [Testing](#description-of-tests)  
-7. [File Overview](#file-overview)  
-8. [License](#license-notice)  
+2. [Installation](#installation)  
+3. [Usage](#usage)  
+4. [Documentation](#documentation)  
+5. [License](#license)  
 
 ---
 
 ## Introduction
 
-**ch-finance-engine** is a Node.js package designed to simulate Swiss-style accounting and finance operations. It aims to help learners and educators with double-entry bookkeeping, currency conversions, yearly accounting closures, and more.
+**ch-finance-engine** is a Node.js package designed for Swiss-style accounting and finance operations. It enables double-entry bookkeeping, currency conversions, and transaction management while maintaining compliance with Swiss accounting standards.
 
----
-
-## Architecture
-
-- **Models** (in `./src/models`):
-  - **Account**: Ledger account (e.g., Bank, Verbindlichkeiten).  
-  - **Book**: Represents a fiscal year.  
-  - **Engine**: Central manager for books, accounts, transactions, and exchange rates.  
-  - **Transaction**: One side of a booking (“Soll” or “Haben”).  
-
-- **Config** (in `./src/config`):
-  - **`standardConfig.json`**: Default currency, exchange rates, and allowed booking types.  
-  - **`accountTypes.js`**: Lists valid account categories (“Aktiv”, “Passiv”, “Aufwand”, “Ertrag”).  
-  - **`transactionSideTypes.js`**: Defines valid sides for transactions (“Soll”, “Haben”).  
-
-- **Utils** (in `./src/utils`):
-  - **`configUtils.js`**: Loads JSON configurations.
-
-- **Tests** (in `./__tests__`):  
-  - **`account.test.js`**, **`book.test.js`**, **`engine.test.js`**, **`transaction.test.js`**.
-
----
-
-## Features
-
-- **Swiss-style double-entry bookkeeping** (Soll/Haben).  
-- **Multiple booking types**: Buchung, Sammelbuchung, Splitsammelbuchung, Rückbuchung.  
-- **Currency conversion** via configuration.  
-- **Year-end closure** of Books and marking Accounts fully booked.  
-- **Extensive unit tests** (Jest) for all major components.
+### Features
+- Double-entry bookkeeping (Soll/Haben)
+- Multi-currency support with configurable exchange rates
+- Year-end closure of books and account management
+- Supports multiple transaction types: Buchung, Sammelbuchung, Splitsammelbuchung, Rückbuchung
+- Extensive unit tests for reliability
 
 ---
 
 ## Installation
 
-1. Clone this repository or add it to your project.  
-2. Run `npm install` to install dependencies.  
-3. Ensure you have Node.js 14+.
+To install the latest version, run:
+```sh
+npm install @x47base/ch-finance-engine@1.0.1-alpha
+```
 
 ---
 
 ## Usage
 
-**Basic Example**:
+### Basic Example
 
 ```js
-// index.js or main script
 const { Engine } = require("@x47base/ch-finance-engine");
 
 function demo() {
@@ -93,7 +69,7 @@ function demo() {
   book2025.addAccount(bankAccount);
   book2025.addAccount(liabilities);
 
-  // Perform a double-entry posting (Buchung): 500 CHF from Bank (Soll) to Liabilities (Haben)
+  // Perform a double-entry posting (Buchung)
   engine.performBuchung(1, bankAccount.code, liabilities.code, 500, "CHF", "Initial Payment");
 
   console.log(JSON.stringify(engine.toJSON(), null, 2));
@@ -104,79 +80,27 @@ demo();
 
 ---
 
-## Description of Tests
+## Documentation
 
-The project includes a comprehensive Jest test suite located in the `__tests__` folder. These tests verify the functionality of each core model and demonstrate various accounting operations:
+### Engine Class
 
-- **`account.test.js`**  
-  Tests creating and managing `Account` instances, including balance modifications, closing/reopening, marking fully booked, and handling transactions with/without currency conversion.
+#### `new Engine(configFile)`
+Creates an engine instance using the specified configuration file.
 
-- **`book.test.js`**  
-  Validates `Book` creation for specific years, adding accounts, closing the Book (and marking accounts fully booked), and reopening.
+#### `createBook(year)`
+Creates a new accounting book for the specified year.
 
-- **`engine.test.js`**  
-  Examines the `Engine` class’s orchestration of `Book`s, `Account`s, and `Transaction`s.  
-  Demonstrates:
-  - Multiple transaction types (Buchung, Sammelbuchung, Splitsammelbuchung, Rückbuchung).
-  - Currency exchange scenarios (e.g., USD to CHF).
-  - Double-entry postings (`performBuchung`) and reversing transactions.
+#### `createAccount(type, code, name, aliases, balance)`
+Creates an account with the given parameters.
 
-- **`transaction.test.js`**  
-  Focuses on the `Transaction` model:  
-  - Valid “Soll” / “Haben” sides.  
-  - Valid booking types (“Buchung”, “Sammelbuchung”, “Splitsammelbuchung”, “Rückbuchung”).  
-  - Transition between “booked” and “canceled” statuses.  
+#### `performBuchung(id, accountSoll, accountHaben, amount, currency, description)`
+Performs a double-entry transaction between two accounts.
 
-You can run all tests using:
-
-```bash
-npm test
-```
+#### `toJSON()`
+Returns the entire engine state as a JSON object.
 
 ---
 
-## File Overview
+## License
 
-### `__tests__`
-- **`account.test.js`**  
-  Tests `Account` creation, validity checks, transactions, closing, and reopening.
-- **`book.test.js`**  
-  Covers `Book` creation, account additions, and closing/reopening behavior.
-- **`engine.test.js`**  
-  Demonstrates the main engine’s orchestration (Book creation, currency exchange, Rückbuchung, Sammelbuchung, etc.).
-- **`transaction.test.js`**  
-  Validates `Transaction` creation, booking types, sides, and status changes.
-
-### `src/config`
-- **`accountTypes.js`**  
-  Defines valid account categories: `"Aktiv"`, `"Passiv"`, `"Aufwand"`, `"Ertrag"`.
-- **`transactionSideTypes.js`**  
-  Defines valid transaction sides: `"Soll"`, `"Haben"`.
-- **`standardConfig.json`**  
-  Default currency settings, exchange rates, and allowable booking types.
-
-### `src/models`
-- **`account.js`**  
-  `Account` class with balance tracking, transaction posting, and closure flags.
-- **`book.js`**  
-  `Book` class representing a fiscal year, storing `Account` references, and handling closures.
-- **`engine.js`**  
-  Orchestrates Books, Accounts, Transactions, and currency conversion logic.
-- **`transaction.js`**  
-  One side of a double-entry, with status (“booked”/“canceled”) and booking type (“Buchung”, “Sammelbuchung”, etc.).
-
-### `src/utils`
-- **`configUtils.js`**  
-  Loads JSON files for configuration (e.g., `standardConfig.json`).
-
-### `README.md`
-This documentation file.
-
-### `package.json`
-Defines package metadata, scripts, and dependencies.
-
----
-
-# License Notice
-
-**Note**: This repository operates under a [modified MIT license](LICENSE). The author retains the right to change the license terms at any time, including any future version release.
+This project is licensed under a [modified MIT license](LICENSE). The author retains the right to modify the license terms in future versions.

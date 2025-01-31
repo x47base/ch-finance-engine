@@ -84,16 +84,16 @@ demo();
 
 ### Engine Class
 
-#### `new Engine(configFile)`
+#### `new Engine(configFile: string = "standard-config")`
 Creates an engine instance using the specified configuration file.
 
-#### `createBook(year)`
+#### `createBook(year: number)`
 Creates a new accounting book for the specified year.
 
-#### `createAccount(type, code, name, aliases, balance)`
+#### `createAccount(type: "Aktiv"|"Passiv"|"Aufwand"|"Ertrag", code: number, name: string, aliases: Array<string>, balance: number)`
 Creates an account with the given parameters.
 
-#### `performBuchung(id, accountSoll, accountHaben, amount, currency, description)`
+#### `performBuchung(id: number, accountSoll: number, accountHaben: number, amount: number, currency: string, description: string)`
 Performs a double-entry transaction between two accounts.
 
 #### `toJSON()`

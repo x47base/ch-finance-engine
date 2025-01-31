@@ -78,6 +78,37 @@ function demo() {
 demo();
 ```
 
+### Example with Template Accounts
+
+```js
+const { Engine } = require("@x47base/ch-finance-engine");
+
+function demoWithTemplateAccounts() {
+  const engine = new Engine("standard-config");
+
+  // Load template accounts
+  engine.loadTemplateAccounts();
+
+  // Create a Book for 2025
+  const book2025 = engine.createBook(2025);
+
+  // Get Accounts
+  const bankAccount = engine.getAccountByCode(1000); // Kasse
+  const liabilities = engine.getAccountByCode(2000); // Verbindlichkeiten aus Lieferungen und Leistungen
+
+  // Add to Book
+  book2025.addAccount(bankAccount);
+  book2025.addAccount(liabilities);
+
+  // Perform a double-entry posting (Buchung)
+  engine.performBuchung(1, bankAccount.code, liabilities.code, 500, "CHF", "Initial Payment");
+
+  console.log(JSON.stringify(engine.toJSON(), null, 2));
+}
+
+demoWithTemplateAccounts();
+```
+
 ---
 
 ## Documentation
